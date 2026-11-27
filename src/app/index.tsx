@@ -1,4 +1,3 @@
-
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -24,10 +23,10 @@ export default function HomeScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Check whether the user is already logged in.
   useEffect(() => {
     let active = true;
 
@@ -118,32 +117,42 @@ export default function HomeScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.container}>
-            <View style={styles.logo}>
-              <Text style={styles.logoText}>M</Text>
+          <View style={styles.page}>
+            {/* Brand section */}
+            <View style={styles.brandSection}>
+              <View style={styles.logo}>
+                <Text style={styles.logoLetter}>S</Text>
+              </View>
+
+              <Text style={styles.brand}>Smart Mail</Text>
+              <Text style={styles.tagline}>
+                A more organized way to manage your inbox.
+              </Text>
             </View>
 
-            <Text style={styles.brand}>Smart Mail</Text>
-            <Text style={styles.subtitle}>
-              One inbox. Everything organized.
-            </Text>
-
+            {/* Authentication card */}
             <View style={styles.card}>
-              <Text style={styles.heading}>
-                {mode === 'login' ? 'Welcome back' : 'Create your account'}
-              </Text>
+              <View style={styles.cardHeader}>
+                <Text style={styles.eyebrow}>
+                  {mode === 'login' ? 'YOUR PERSONAL WORKSPACE' : 'GET STARTED'}
+                </Text>
 
-              <Text style={styles.description}>
-                {mode === 'login'
-                  ? 'Sign in to continue to your smart inbox.'
-                  : 'Create an account to get started with Smart Mail.'}
-              </Text>
+                <Text style={styles.heading}>
+                  {mode === 'login' ? 'Welcome back' : 'Create your account'}
+                </Text>
+
+                <Text style={styles.description}>
+                  {mode === 'login'
+                    ? 'Sign in to access your organized inbox and stay on top of what matters.'
+                    : 'Create your Smart Mail account to bring your emails and important updates together.'}
+                </Text>
+              </View>
 
               <Text style={styles.label}>Email address</Text>
               <TextInput
                 style={styles.input}
-                placeholder="you@example.com"
-                placeholderTextColor="#8B95A5"
+                placeholder="name@example.com"
+                placeholderTextColor="#9AA4B2"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -152,16 +161,32 @@ export default function HomeScreen() {
                 editable={!loading}
               />
 
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                placeholderTextColor="#8B95A5"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                editable={!loading}
-              />
+              <View style={styles.labelRow}>
+                <Text style={styles.label}>Password</Text>
+              </View>
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#9AA4B2"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  editable={!loading}
+                />
+
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                  hitSlop={10}
+                >
+                  <Text style={styles.passwordToggle}>
+                    {showPassword ? 'HIDE' : 'SHOW'}
+                  </Text>
+                </Pressable>
+              </View>
 
               {mode === 'signup' && (
                 <>
@@ -169,10 +194,11 @@ export default function HomeScreen() {
                   <TextInput
                     style={styles.input}
                     placeholder="Re-enter your password"
-                    placeholderTextColor="#8B95A5"
+                    placeholderTextColor="#9AA4B2"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
                     editable={!loading}
                   />
                 </>
@@ -197,7 +223,7 @@ export default function HomeScreen() {
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
                   <Text style={styles.primaryButtonText}>
-                    {mode === 'login' ? 'Login' : 'Create account'}
+                    {mode === 'login' ? 'Sign in to Smart Mail' : 'Create account'}
                   </Text>
                 )}
               </Pressable>
@@ -215,19 +241,24 @@ export default function HomeScreen() {
                     setMessage('');
                     setPassword('');
                     setConfirmPassword('');
+                    setShowPassword(false);
                   }}
                   disabled={loading}
                 >
                   <Text style={styles.switchLink}>
-                    {mode === 'login' ? 'Sign Up' : 'Login'}
+                    {mode === 'login' ? 'Create account' : 'Sign in'}
                   </Text>
                 </Pressable>
               </View>
             </View>
 
-            <Text style={styles.footer}>
-              Your email. Your control. One smarter inbox.
-            </Text>
+            {/* Footer */}
+            <View style={styles.footer}>
+              <Text style={styles.footerTitle}>SMART MAIL</Text>
+              <Text style={styles.footerText}>
+                Your email. Your control. One smarter inbox.
+              </Text>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -239,133 +270,216 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
+
   safeArea: {
     flex: 1,
-    backgroundColor: '#F4F7FB',
+    backgroundColor: '#F7F8FA',
   },
+
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 22,
+    paddingVertical: 38,
   },
-  container: {
+
+  page: {
     width: '100%',
-    maxWidth: 440,
+    maxWidth: 460,
     alignSelf: 'center',
+  },
+
+  brandSection: {
     alignItems: 'center',
-  },
-  logo: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    backgroundColor: '#2563EB',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 14,
-  },
-  logoText: {
-    color: '#FFFFFF',
-    fontSize: 32,
-    fontWeight: '800',
-  },
-  brand: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: '#14213D',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#64748B',
-    marginTop: 7,
     marginBottom: 30,
   },
-  card: {
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: '#E5EAF1',
+
+  logo: {
+    width: 58,
+    height: 58,
+    borderRadius: 15,
+    backgroundColor: '#172B4D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 13,
   },
-  heading: {
-    fontSize: 24,
+
+  logoLetter: {
+    color: '#FFFFFF',
+    fontSize: 31,
     fontWeight: '700',
-    color: '#14213D',
   },
-  description: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: '#64748B',
-    marginTop: 8,
-    marginBottom: 24,
+
+  brand: {
+    color: '#172B4D',
+    fontSize: 29,
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
-  label: {
+
+  tagline: {
+    color: '#718096',
     fontSize: 13,
-    fontWeight: '600',
-    color: '#334155',
-    marginBottom: 8,
+    marginTop: 7,
+    textAlign: 'center',
   },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#DCE3ED',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    color: '#14213D',
+
+  card: {
     backgroundColor: '#FFFFFF',
-    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: '#E7EAF0',
+    borderRadius: 13,
+    padding: 27,
   },
+
+  cardHeader: {
+    marginBottom: 27,
+  },
+
+  eyebrow: {
+    color: '#55779B',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1.7,
+    marginBottom: 12,
+  },
+
+  heading: {
+    color: '#172B4D',
+    fontSize: 26,
+    fontWeight: '700',
+    letterSpacing: -0.5,
+  },
+
+  description: {
+    color: '#718096',
+    fontSize: 13,
+    lineHeight: 21,
+    marginTop: 9,
+  },
+
+  labelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  label: {
+    color: '#34445B',
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 9,
+  },
+
+  input: {
+    height: 49,
+    borderWidth: 1,
+    borderColor: '#DDE3EB',
+    borderRadius: 7,
+    paddingHorizontal: 13,
+    fontSize: 14,
+    color: '#172B4D',
+    backgroundColor: '#FFFFFF',
+    marginBottom: 20,
+  },
+
+  passwordContainer: {
+    height: 49,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#DDE3EB',
+    borderRadius: 7,
+    paddingHorizontal: 13,
+    marginBottom: 20,
+  },
+
+  passwordInput: {
+    flex: 1,
+    height: '100%',
+    color: '#172B4D',
+    fontSize: 14,
+  },
+
+  passwordToggle: {
+    color: '#55779B',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+
   primaryButton: {
-    height: 52,
-    borderRadius: 10,
-    backgroundColor: '#2563EB',
+    height: 50,
+    backgroundColor: '#172B4D',
+    borderRadius: 7,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: 5,
   },
+
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
+    letterSpacing: 0.2,
   },
+
   pressed: {
     opacity: 0.85,
   },
+
   disabled: {
     opacity: 0.6,
   },
+
   messageBox: {
-    backgroundColor: '#FFF4E5',
-    borderRadius: 8,
+    backgroundColor: '#FFF5EB',
+    borderWidth: 1,
+    borderColor: '#F3D5B8',
+    borderRadius: 7,
     padding: 12,
-    marginBottom: 12,
+    marginBottom: 13,
   },
+
   messageText: {
-    color: '#9A5800',
-    fontSize: 13,
+    color: '#945B27',
+    fontSize: 12,
     lineHeight: 19,
   },
+
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'wrap',
-    marginTop: 22,
     gap: 5,
-  },
-  switchText: {
-    color: '#64748B',
-    fontSize: 13,
-  },
-  switchLink: {
-    color: '#2563EB',
-    fontWeight: '700',
-    fontSize: 13,
-  },
-  footer: {
-    color: '#94A3B8',
-    fontSize: 12,
     marginTop: 24,
-    textAlign: 'center',
+  },
+
+  switchText: {
+    color: '#718096',
+    fontSize: 12,
+  },
+
+  switchLink: {
+    color: '#55779B',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+
+  footer: {
+    alignItems: 'center',
+    marginTop: 27,
+  },
+
+  footerTitle: {
+    color: '#9AA4B2',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 2,
+  },
+
+  footerText: {
+    color: '#9AA4B2',
+    fontSize: 11,
+    marginTop: 7,
   },
 });
